@@ -1,6 +1,23 @@
+use itertools::Itertools;
+
 #[tracing::instrument]
-pub fn process(_input: &str) -> miette::Result<String> {
-    todo!("day 01 - part 1");
+pub fn process(input: &str) -> miette::Result<String> {
+    let (mut a, mut b): (Vec<_>, Vec<_>) = input
+        .lines()
+        .map(|line| line
+            .split_whitespace()
+            .map(|s| s.parse::<i32>().expect("Input should be ints"))
+            .collect_tuple::<(i32, i32)>()
+            .expect("Expected two items split by whitespace")
+        )
+        .unzip();
+    a.sort();
+    b.sort();
+    let sum: i32 = a.into_iter()
+        .zip(b)
+        .map(|(a, b)| (a - b).abs())
+        .sum();
+    Ok(format!("{sum}"))
 }
 
 #[cfg(test)]
@@ -9,9 +26,13 @@ mod tests {
 
     #[test]
     fn test_process() -> miette::Result<()> {
-        todo!("haven't built test yet");
-        let input = "";
-        assert_eq!("", process(input)?);
+        let input = "3   4
+4   3
+2   5
+1   3
+3   9
+3   3";
+        assert_eq!("11", process(input)?);
         Ok(())
     }
 }
